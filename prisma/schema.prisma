@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model elo_update {
+  id      BigInt   @id
+  user_id BigInt
+  old_elo Int
+  new_elo Int
+  time    DateTime @default(now()) @db.Timestamp(0)
+}
+
+model game {
+  id            BigInt @id
+  player1_id    BigInt
+  player2_id    BigInt
+  player1_score Int
+  player2_score Int
+}
+
+model user {
+  id         BigInt @id
+  first_name String @db.VarChar(30)
+  last_name  String @db.VarChar(30)
+  email      String @db.VarChar(30)
+  pass_hash  String @db.VarChar(70)
+}
