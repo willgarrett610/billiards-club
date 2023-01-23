@@ -7,26 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model elo_update {
-  id      BigInt   @id
-  user_id BigInt
-  old_elo Int
-  new_elo Int
-  time    DateTime @default(now()) @db.Timestamp(0)
+model User {
+  id        BigInt @id
+  firstName String @map("first_name") @db.VarChar(30)
+  lastName  String @map("last_name") @db.VarChar(30)
+  email     String @db.VarChar(30)
+  passHash  String @map("pass_hash") @db.VarChar(70)
+
+  sessions Session[]
+
+  @@map("users")
 }
 
-model game {
-  id            BigInt @id
-  player1_id    BigInt
-  player2_id    BigInt
-  player1_score Int
-  player2_score Int
+model Session {
+  id           BigInt   @id
+  sessionToken String   @map("session_token") @db.VarChar(70)
+  userId       BigInt   @map("user_id")
+  expires      DateTime @db.Timestamp(0)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
-model user {
-  id         BigInt @id
-  first_name String @db.VarChar(30)
-  last_name  String @db.VarChar(30)
-  email      String @db.VarChar(30)
-  pass_hash  String @db.VarChar(70)
+model EloUpdate {
+  id     BigInt   @id
+  userId BigInt   @map("user_id")
+  oldElo Int      @map("old_elo")
+  newElo Int      @map("new_elo")
+  time   DateTime @default(now()) @db.Timestamp(0)
+
+  @@map("elo_updates")
+}
+
+model Game {
+  id           BigInt @id
+  player1Id    BigInt @map("player1_id")
+  player2Id    BigInt @map("player2_id")
+  player1Score Int    @map("player1_score")
+  player2Score Int    @map("player2_score")
+
+  @@map("games")
 }
