@@ -1,0 +1,31 @@
+.header {
+  width: 100%;
+  height: 50px;
+  background-color: black;
+}
+
+.menuBtn {
+  font-size: 2.1em !important;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+}
+
+.googleButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.accountImageCont {
+  height: 36px;
+  overflow: hidden;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right: 8px
+}
+
+.accountImage {
+  height: 36px;
+}
