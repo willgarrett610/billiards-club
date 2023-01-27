@@ -1,8 +1,9 @@
 import styles from '@/styles/MobileHeader.module.css';
 import { signIn, useSession } from 'next-auth/react';
 // import GoogleButton from 'react-google-button'
-import GoogleButton from '@/components/google-btn'
+import GoogleButton from '@/components/header/google-btn'
 import MenuIcon from '@mui/icons-material/Menu';
+import MobileNavMenu from './mobile-nav-menu';
 
 export default () => {
   const { data: session } = useSession();
@@ -21,7 +22,7 @@ export default () => {
   )
   return (<>
     <div className={styles.header}>
-      <MenuIcon className={styles.menuBtn}/>
+      <MobileNavMenu/>
       {/* <div className={styles.home}>Home</div>
       <div className={styles.button}>Mobile</div> */}
       {account}

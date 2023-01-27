@@ -1,6 +1,6 @@
 import styles from '@/styles/DesktopHeader.module.css';
 import { signIn, useSession } from 'next-auth/react';
-import GoogleButton from 'react-google-button'
+import GoogleButton from '@/components/header/google-btn';
 
 export default () => {
   const { data: session } = useSession();
@@ -11,15 +11,18 @@ export default () => {
     </div>
   ) : (
     <GoogleButton
-      className={styles.googleButton}
-      type="dark"
+      // className={styles.googleButton}
+      // type="dark"
+      top={9}
+      right={8}
+      scale={1.15}
       onClick={() => signIn("google")}
     />
   )
   return (<>
     <div className={styles.header}>
       <div className={styles.home}>Home</div>
-      <div className={styles.button}>Desktop</div>
+      <div className={styles.button}>Rankings</div>
       {account}
     </div>
   </>);

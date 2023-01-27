@@ -2,8 +2,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import { useSession, getProviders, signIn, signOut } from "next-auth/react"
-import DesktopHeader from '@/components/desktop-header'
-import MobileHeader from '@/components/mobile-header'
+import DesktopHeader from '@/components/header/desktop-header'
+import MobileHeader from '@/components/header/mobile-header'
 // import styles from '@/styles/Home.module.css'
 
 const inter = Inter({ subsets: ['latin'] })
