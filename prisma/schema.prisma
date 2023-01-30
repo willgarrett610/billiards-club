@@ -10,17 +10,29 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   admin         Boolean   @default(false)
 
-  sessions   Session[]
-  accounts   Account[]
-  userTeams  UserTeam[]
-  eloUpdates EloUpdate[]
+  sessions Session[]
+  accounts Account[]
+
+  player Player @relation(fields: [email], references: [email])
 
   @@map("users")
+}
+
+model Player {
+  id    String @id @default(cuid())
+  name  String
+  email String @unique
+
+  user       User?
+  eloUpdates EloUpdate[]
+  teams      PlayerTeam[]
+
+  @@map("players")
 }
 
 model Account {
@@ -54,28 +66,28 @@ model Session {
 }
 
 model EloUpdate {
-  id     BigInt   @id
-  userId String   @map("user_id")
-  gameId BigInt   @map("game_id")
-  oldElo Int      @map("old_elo")
-  newElo Int      @map("new_elo")
-  time   DateTime @default(now()) @db.Timestamp(0)
+  id       BigInt   @id
+  playerId String   @map("player_id")
+  gameId   BigInt   @map("game_id")
+  oldElo   Int      @map("old_elo")
+  newElo   Int      @map("new_elo")
+  time     DateTime @default(now()) @db.Timestamp(0)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@map("elo_updates")
 }
 
-model UserTeam {
-  id     BigInt @id
-  userId String @map("user_id")
-  teamId BigInt @map("team_id")
+model PlayerTeam {
+  id       BigInt @id
+  playerId String @map("player_id")
+  teamId   BigInt @map("team_id")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  @@map("user_teams")
+  @@map("player_teams")
 }
 
 model Team {
@@ -83,14 +95,15 @@ model Team {
   gameId BigInt @map("game_id")
   score  Int
 
-  game    Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  players UserTeam[]
+  game    Game         @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  players PlayerTeam[]
 
   @@map("teams")
 }
 
 model Game {
   id         BigInt      @id
+  time       DateTime    @default(now()) @db.Timestamp(0)
   teams      Team[]
   eloUpdates EloUpdate[]
 

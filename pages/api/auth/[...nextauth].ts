@@ -18,6 +18,30 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
+  events: {
+    async createUser({ user }) {
+      console.log("Create User: " + user.name);
+      if (!user.email || !user.name) return;
+
+      const count = await prisma.player.count({
+        where: {
+          email: user.email,
+        },
+      });
+
+      console.log("Matching players: " + count);
+
+      if (count > 0) return;
+
+      console.log("Creating player...");
+      await prisma.player.create({
+        data: {
+          name: user.name,
+          email: user.email,
+        },
+      });
+    },
+  },
 };
 
 export default NextAuth(authOptions);
