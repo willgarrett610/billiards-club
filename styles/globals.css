@@ -25,3 +25,12 @@ body {
   }
 
 }
+
+.pageTitle {
+  font-size: 2em;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0;
+}

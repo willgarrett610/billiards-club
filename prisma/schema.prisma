@@ -24,9 +24,8 @@ model User {
 }
 
 model Player {
-  id    String @id @default(cuid())
   name  String
-  email String @unique
+  email String @id
 
   user       User?
   eloUpdates EloUpdate[]
@@ -73,7 +72,7 @@ model EloUpdate {
   newElo   Int      @map("new_elo")
   time     DateTime @default(now()) @db.Timestamp(0)
 
-  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [email], onDelete: Cascade)
   game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@map("elo_updates")
@@ -84,7 +83,7 @@ model PlayerTeam {
   playerId String @map("player_id")
   teamId   BigInt @map("team_id")
 
-  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [email], onDelete: Cascade)
   team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("player_teams")

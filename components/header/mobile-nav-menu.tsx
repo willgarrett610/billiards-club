@@ -10,8 +10,6 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 export default () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  console.log(isOpen);
-
   return (
     <>
       <MenuIcon onClick={() => setIsOpen(true)} className={styles.menuBtn}/>
