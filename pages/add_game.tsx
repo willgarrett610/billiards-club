@@ -5,6 +5,8 @@ import { Player } from '@prisma/client'
 import { useState } from 'react'
 
 import styles from '@/styles/AddGame.module.css';
+import { useSession } from 'next-auth/react'
+import AdminOnly from '@/components/admin-only'
 
 export default () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -16,7 +18,8 @@ export default () => {
   if (!loading && players.length == 0) {
     setLoading(true);
     getPlayers().then(players => {
-      setPlayers(players);
+      if (players != null)
+        setPlayers(players);
     });
   }
 
@@ -30,64 +33,66 @@ export default () => {
 
   return (<>
     <Header />
-    <div className="content">
-      <div className="pageTitle">Add Game</div>
-      <div className={styles.formArea}>
-        <div className={styles.playerSection}>
-          <div className={styles.playerName}>Player 1</div>
-          <div className={styles.playerInputs}>
-            <Autocomplete
-              {...autoCompProps}
-              id="name1"
-              value={player1}
-              onChange={(e: any, newValue: Player | string | null) => {
-                setPlayer1(newValue);
-              }}
-            />
-            <TextField 
-              value={typeof player1 == "string" ? undefined : player1?.email} 
-              InputLabelProps={{
-                shrink: (player1 != null && (typeof player1 != "string")) ? true : undefined,
-              }}
-              id="email1" 
-              label="Email" 
-              className={styles.playerInput} 
-            />
-            <TextField
-              id="score1"
-              label="Score"
-              type="number"
-              className={styles.playerInput}
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
-            />
+    <AdminOnly>
+      <div className="content">
+        <div className="pageTitle">Add Game</div>
+        <div className={styles.formArea}>
+          <div className={styles.playerSection}>
+            <div className={styles.playerName}>Player 1</div>
+            <div className={styles.playerInputs}>
+              <Autocomplete
+                {...autoCompProps}
+                id="name1"
+                value={player1}
+                onChange={(e: any, newValue: Player | string | null) => {
+                  setPlayer1(newValue);
+                }}
+              />
+              <TextField 
+                value={typeof player1 == "string" ? undefined : player1?.email} 
+                InputLabelProps={{
+                  shrink: (player1 != null && (typeof player1 != "string")) ? true : undefined,
+                }}
+                id="email1" 
+                label="Email" 
+                className={styles.playerInput} 
+              />
+              <TextField
+                id="score1"
+                label="Score"
+                type="number"
+                className={styles.playerInput}
+                // InputLabelProps={{
+                //   shrink: true,
+                // }}
+              />
+            </div>
           </div>
-        </div>
-        <div className={styles.playerSection}>
-          <div className={styles.playerName}>Player 2</div>
-          <div className={styles.playerInputs}>
-            <Autocomplete
-              {...autoCompProps}
-              id="name2"
-              value={player2}
-              onChange={(e: any, newValue: Player | string | null) => {
-                setPlayer2(newValue);
-              }}
-            />
-            <TextField id="email2" label="Email" className={styles.playerInput}/>
-            <TextField
-              id="score2"
-              label="Score"
-              type="number"
-              className={styles.playerInput}
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
-            />
+          <div className={styles.playerSection}>
+            <div className={styles.playerName}>Player 2</div>
+            <div className={styles.playerInputs}>
+              <Autocomplete
+                {...autoCompProps}
+                id="name2"
+                value={player2}
+                onChange={(e: any, newValue: Player | string | null) => {
+                  setPlayer2(newValue);
+                }}
+              />
+              <TextField id="email2" label="Email" className={styles.playerInput}/>
+              <TextField
+                id="score2"
+                label="Score"
+                type="number"
+                className={styles.playerInput}
+                // InputLabelProps={{
+                //   shrink: true,
+                // }}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </AdminOnly>
   </>)
 }

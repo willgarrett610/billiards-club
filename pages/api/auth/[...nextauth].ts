@@ -18,6 +18,12 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
+  callbacks: {
+    session: async ({ session, user }) => {
+      (session as any).user.admin = (user as any).admin;
+      return Promise.resolve(session);
+    },
+  },
   events: {
     async createUser({ user }) {
       console.log("Create User: " + user.name);
