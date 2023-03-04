@@ -34,3 +34,7 @@ body {
   text-align: center;
   margin: 10px 0;
 }
+
+.content {
+  padding: 10px 15px 0 15px;
+}
