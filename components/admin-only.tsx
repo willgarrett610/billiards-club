@@ -10,10 +10,6 @@ interface AdminOnlyProps {
 export default ({children}: AdminOnlyProps) => {
   const {data: session, status} = useSession();
 
-  if (session && session.user) {
-    console.log((session.user as any).admin);
-  }
-
   const content = status == "loading" ? (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'center', height: '500px' }}>

@@ -65,7 +65,7 @@ model Session {
 }
 
 model EloUpdate {
-  id       BigInt   @id
+  id       BigInt   @id @default(autoincrement())
   playerId String   @map("player_id")
   gameId   BigInt   @map("game_id")
   oldElo   Int      @map("old_elo")
@@ -79,7 +79,7 @@ model EloUpdate {
 }
 
 model PlayerTeam {
-  id       BigInt @id
+  id       BigInt @id @default(autoincrement())
   playerId String @map("player_id")
   teamId   BigInt @map("team_id")
 
@@ -90,7 +90,7 @@ model PlayerTeam {
 }
 
 model Team {
-  id     BigInt @id
+  id     BigInt @id @default(autoincrement())
   gameId BigInt @map("game_id")
   score  Int
 
@@ -100,11 +100,22 @@ model Team {
   @@map("teams")
 }
 
+model GameType {
+  id   BigInt @id @default(autoincrement())
+  name String
+
+  games Game[]
+
+  @@map("game_types")
+}
+
 model Game {
-  id         BigInt      @id
+  id         BigInt      @id @default(autoincrement())
   time       DateTime    @default(now()) @db.Timestamp(0)
+  gameTypeId BigInt      @map("game_type_id")
   teams      Team[]
   eloUpdates EloUpdate[]
+  gameType   GameType    @relation(fields: [gameTypeId], references: [id], onDelete: Cascade)
 
   @@map("games")
 }
