@@ -1,9 +1,11 @@
-import DesktopHeader from "./desktop-header"
-import MobileHeader from "./mobile-header"
+import { DesktopHeader } from './desktop-header';
+import { MobileHeader } from './mobile-header';
 
-export default () => {
-  return (<>
-    <DesktopHeader />
-    <MobileHeader />
-  </>)
-}
+export const Header = () => {
+    return (
+        <>
+            <DesktopHeader />
+            <MobileHeader />
+        </>
+    );
+};
