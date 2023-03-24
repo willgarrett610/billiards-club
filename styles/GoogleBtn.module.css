@@ -1,50 +1,50 @@
 .googleBtn {
-  width: 11.875em;
-  height: 2.25em;
-  background-color: #202124;
-  position: absolute;
-  /* right: 7px;
+    width: 11.875em;
+    height: 2.25em;
+    background-color: #202124;
+    position: absolute;
+    /* right: 7px;
   top: 7px; */
-  border-radius: 0.25em;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  cursor: pointer;
+    border-radius: 0.25em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    cursor: pointer;
 }
 
 .iconCont {
-  width: 2em;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    width: 2em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .iconBack {
-  border-radius: 0.1875em 0 0 0.1875em;
-  width: 2em;
-  height: 2em;
-  background-color: #ffffff;
+    border-radius: 0.1875em 0 0 0.1875em;
+    width: 2em;
+    height: 2em;
+    background-color: #ffffff;
 }
 
-.textCont { 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.textCont {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .text {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  font-size: 0.9em;
-  margin: 0 0.9375em 0 0.9375em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 0.9em;
+    margin: 0 0.9375em 0 0.9375em;
 }
 
 .svg {
-  width: 2.5em;
-  height: 2.5em;
-  display: block;
-  position: absolute;
-  left: -0.05em;
-  top: -0.125em;
+    width: 2.5em;
+    height: 2.5em;
+    display: block;
+    position: absolute;
+    left: -0.05em;
+    top: -0.125em;
 }

@@ -1,40 +1,40 @@
 .formArea {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0 100px 0 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 100px 0 100px;
 }
 
 .playerSection {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 48%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 48%;
 }
 
 .playerName {
-  font-size: 1.3em;
+    font-size: 1.3em;
 }
 
 .playerInputs {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .playerInput {
-  width: 100%;
-  margin-top: 10px;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .submitBtn {
-  margin: 20px 0 0 100px;
-  height: 40px;
-  width: 100px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: #3131ec;
-  border-radius: 4px;
+    margin: 20px 0 0 100px;
+    height: 40px;
+    width: 100px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #3131ec;
+    border-radius: 4px;
 }
