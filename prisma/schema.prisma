@@ -110,7 +110,7 @@ model GameType {
 }
 
 model Game {
-  id         BigInt      @id @default(autoincrement())
+  id         BigInt      @id
   time       DateTime    @default(now()) @db.Timestamp(0)
   gameTypeId BigInt      @map("game_type_id")
   teams      Team[]
