@@ -36,21 +36,15 @@ function isReqData(data: unknown): data is ReqData {
 
 type EloData = {
     elo: number;
-    game_count: bigint;
+    game_count: number;
 };
 
 function isEloData(data: unknown): data is EloData {
     if (typeof data !== 'object' || data === null) return false;
     if ('elo' in data && typeof data.elo !== 'number') return false;
-    if ('game_count' in data && typeof data.game_count !== 'bigint') return false;
+    if ('game_count' in data && typeof data.game_count !== 'number') return false;
 
     return true;
-}
-
-function isEloDataList(data: unknown): data is EloData[] {
-    if (!Array.isArray(data)) return false;
-
-    return data.every(isEloData);
 }
 
 const getEloData = async (email: string) => {
@@ -69,19 +63,17 @@ const getEloData = async (email: string) => {
 //   (SELECT player_id, COUNT(player_id) as game_count FROM \`elo_updates\` WHERE player_id=${email}) \`player_count\` 
 //   ON \`player_elo\`.player_id = \`player_count\`.player_id`;
 
-    if (!isEloDataList(eloData1)) {
-        throw new Error('Invalid elo data');
-    }
-
     let elo: number;
     let game_count: number;
 
-    if (eloData1.length === 0) {
+    if (eloData1 === null) {
         elo = 1000;
         game_count = 0;
+    } else if(isEloData(eloData1)) {
+        elo = eloData1.elo;
+        game_count = Number(eloData1.game_count);
     } else {
-        [{ elo }] = eloData1;
-        game_count = Number(eloData1[0].game_count);
+        throw new Error('Invalid elo data');
     }
 
     return { elo, game_count };
