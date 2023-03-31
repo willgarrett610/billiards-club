@@ -24,8 +24,10 @@ model User {
 }
 
 model Player {
-  name  String
-  email String @id
+  name       String
+  email      String @id
+  elo        Int    @default(1000)
+  game_count Int    @default(0)
 
   user       User?
   eloUpdates EloUpdate[]

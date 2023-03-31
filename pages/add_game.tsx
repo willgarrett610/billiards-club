@@ -238,3 +238,5 @@ export const AddGame = () => {
         </>
     );
 };
+
+export default AddGame;

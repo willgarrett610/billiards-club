@@ -24,6 +24,8 @@ export const DesktopHeader = () => {
             <Image
                 src={session.user.image as string}
                 className={styles.accountImage}
+                width={40}
+                height={40}
                 alt={''}
             />
         </div>
