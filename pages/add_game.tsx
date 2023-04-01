@@ -127,6 +127,8 @@ export const AddGame = () => {
 
     const [showError, setShowError] = useState(false);
 
+    const [submitting, setSubmitting] = useState(false);
+
     if (!loading && players.length === 0) {
         setLoading(true);
         getPlayers().then((players) => {
@@ -139,6 +141,8 @@ export const AddGame = () => {
             setShowError(true);
             return;
         }
+
+        setSubmitting(true);
 
         const playerName1 = typeof player1 === 'string' ? player1 : player1.name;
         const playerName2 = typeof player2 === 'string' ? player2 : player2.name;
@@ -153,8 +157,6 @@ export const AddGame = () => {
             game,
         });
 
-        // TODO: Get player name correctly
-
         fetch('/api/add_game', {
             body: JSON.stringify({
                 player1: playerName1,
@@ -166,6 +168,17 @@ export const AddGame = () => {
                 game,
             }),
             method: 'POST',
+        }).then((res) => {
+            if (res.status === 200) {
+                setPlayer1('');
+                setEmail1('');
+                setScore1(0);
+                setPlayer2('');
+                setEmail2('');
+                setScore2(0);
+                setGame(1);
+                setSubmitting(false);
+            }
         });
     };
 
@@ -227,6 +240,7 @@ export const AddGame = () => {
                         </FormControl>
                         <Button
                             onClick={submit}
+                            disabled={submitting}
                             variant="contained"
                             sx={{ width: '150px', marginTop: '20px' }}
                         >
