@@ -3,7 +3,6 @@ import { getPlayers } from '@/util/playerUtil';
 import {
     Autocomplete,
     AutocompleteRenderInputParams,
-    Box,
     Button,
     FormControl,
     InputLabel,
@@ -189,11 +188,9 @@ export const AddGame = () => {
                 <div className="content">
                     <div className="pageTitle">Add Game</div>
                     <div className={styles.formArea}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
+                        <div className="mobileFlex"
+                            style={{
+                                justifyContent: 'space-between'
                             }}
                         >
                             {playerSection(
@@ -216,7 +213,7 @@ export const AddGame = () => {
                                 setScore2,
                                 showError,
                             )}
-                        </Box>
+                        </div>
                         <FormControl sx={{ marginTop: '20px' }}>
                             <InputLabel id="gameLabel">Game</InputLabel>
                             <Select

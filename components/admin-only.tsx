@@ -5,13 +5,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 interface AdminOnlyProps {
     children: JSX.Element | JSX.Element[];
+    noExtras?: boolean;
 }
 
-export const AdminOnly = ({ children }: AdminOnlyProps) => {
+export const AdminOnly = ({ children, noExtras }: AdminOnlyProps) => {
     const { data: session, status } = useSession();
 
     const content =
         status === 'loading' ? (
+            noExtras ? <></> :
             <Box
                 sx={{
                     display: 'flex',
@@ -32,6 +34,7 @@ export const AdminOnly = ({ children }: AdminOnlyProps) => {
         ) : session?.user.admin ? (
             <>{children}</>
         ) : (
+            noExtras ? <></> :
             <div className={styles.adminOnly}>You are not allowed to view this page.</div>
         );
 

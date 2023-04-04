@@ -6,7 +6,7 @@ export const getUserFromSession = async (session: Session | null) => {
         return null;
     }
 
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             email: session.user.email,
         },

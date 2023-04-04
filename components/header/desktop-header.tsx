@@ -4,6 +4,8 @@ import { GoogleButton } from '@/components/header/google-btn';
 import React from 'react';
 import { Menu, MenuItem } from '@mui/material';
 import Image from 'next/image';
+import { AdminOnly } from '../admin-only';
+import Link from 'next/link';
 
 export const DesktopHeader = () => {
     const { data: session } = useSession();
@@ -42,8 +44,11 @@ export const DesktopHeader = () => {
     return (
         <div className="desktop">
             <div className={styles.header}>
-                <div className={styles.home}>Home</div>
-                <div className={styles.button}>Rankings</div>
+                <Link className={styles.home} href="/">Home</Link>
+                <Link className={styles.button} href="/rankings">Rankings</Link>
+                <AdminOnly noExtras>
+                    <Link className={styles.button} href="/add_game">Add Game</Link>
+                </AdminOnly>
                 {account}
             </div>
             <Menu id="profile-menu" anchorEl={anchorEl} open={open} onClose={closeMenu}>

@@ -14,11 +14,21 @@ body {
     .mobile {
         display: none !important;
     }
+
+    .mobileFlex {
+        display: flex;
+        flex-direction: row;
+    }
 }
 
 @media (max-width: 768px) {
     .desktop {
         display: none !important;
+    }
+
+    .mobileFlex {
+        display: flex;
+        flex-direction: column;
     }
 }
 

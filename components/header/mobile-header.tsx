@@ -27,8 +27,8 @@ export const MobileHeader = () => {
                 alt=""
                 src={session.user.image as string}
                 className={styles.accountImage}
-                width={40}
-                height={40}
+                width={36}
+                height={36}
             />
         </div>
     ) : (

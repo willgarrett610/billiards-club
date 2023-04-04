@@ -1,9 +1,9 @@
-import prisma from '@/lib/prismadb';
 import { Player } from '@prisma/client';
 
 export const getPlayers = async (): Promise<Player[]> => {
-    if (!process.browser) {
-        throw new Error('getPlayers can only be called on the client');
+    if (typeof window === 'undefined') {
+        console.warn('getPlayers can only be called on the client');
+        return [];
     }
 
     const res = await fetch('http://' + window.location.host + '/api/get_players');
@@ -28,8 +28,9 @@ export type Ranking = {
 };
 
 export const getRankings = async (): Promise<Ranking[]> => {
-    if (!process.browser) {
-        throw new Error('getRankings can only be called on the client');
+    if (typeof window === 'undefined') {
+        console.warn('getRankings can only be called on the client');
+        return [];
     }
 
     const res = await fetch('http://' + window.location.host + '/api/get_rankings');
@@ -46,7 +47,7 @@ export const getRankings = async (): Promise<Ranking[]> => {
         throw new Error('Invalid ranking data');
     }
     return data.rankings as Ranking[];
-}
+};
 
 export const isPlayer = (possiblePlayer: unknown): possiblePlayer is Player => {
     if (typeof possiblePlayer !== 'object') return false;
