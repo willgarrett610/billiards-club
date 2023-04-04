@@ -6,7 +6,7 @@ export const getPlayers = async (): Promise<Player[]> => {
         return [];
     }
 
-    const res = await fetch('http://' + window.location.host + '/api/get_players');
+    const res = await fetch('https://' + window.location.host + '/api/get_players');
     const data = (await res.json()) as unknown;
     if (
         typeof data !== 'object' ||
@@ -33,7 +33,7 @@ export const getRankings = async (): Promise<Ranking[]> => {
         return [];
     }
 
-    const res = await fetch('http://' + window.location.host + '/api/get_rankings');
+    const res = await fetch('https://' + window.location.host + '/api/get_rankings');
     const data = (await res.json()) as unknown;
     if (
         typeof data !== 'object' ||
