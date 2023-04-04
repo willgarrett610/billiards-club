@@ -51,17 +51,17 @@ const getEloData = async (email: string) => {
     const eloData1 = await prisma.player.findFirst({
         select: {
             elo: true,
-            game_count: true
+            game_count: true,
         },
         where: {
-            email
-        }
+            email,
+        },
     });
-//     const eloData1 = await prisma.$queryRaw`SELECT new_elo as elo, game_count FROM 
-//   (SELECT player_id, new_elo FROM \`elo_updates\` WHERE player_id=${email} ORDER BY id DESC LIMIT 1) \`player_elo\`
-//   INNER JOIN 
-//   (SELECT player_id, COUNT(player_id) as game_count FROM \`elo_updates\` WHERE player_id=${email}) \`player_count\` 
-//   ON \`player_elo\`.player_id = \`player_count\`.player_id`;
+    //     const eloData1 = await prisma.$queryRaw`SELECT new_elo as elo, game_count FROM
+    //   (SELECT player_id, new_elo FROM \`elo_updates\` WHERE player_id=${email} ORDER BY id DESC LIMIT 1) \`player_elo\`
+    //   INNER JOIN
+    //   (SELECT player_id, COUNT(player_id) as game_count FROM \`elo_updates\` WHERE player_id=${email}) \`player_count\`
+    //   ON \`player_elo\`.player_id = \`player_count\`.player_id`;
 
     let elo: number;
     let game_count: number;
@@ -69,8 +69,9 @@ const getEloData = async (email: string) => {
     if (eloData1 === null) {
         elo = 1000;
         game_count = 0;
-    } else if(isEloData(eloData1)) {
-        elo = eloData1.elo;
+    } else if (isEloData(eloData1)) {
+        const { elo: newElo } = eloData1;
+        elo = newElo;
         game_count = Number(eloData1.game_count);
     } else {
         throw new Error('Invalid elo data');

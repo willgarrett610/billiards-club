@@ -4,7 +4,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useState } from 'react';
 
 
-export default () => {
+const Rankings = () => {
   const [rankings, setRankings] = useState<Ranking[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -44,3 +44,5 @@ export default () => {
     </>
   )
 };
+
+export default Rankings;
