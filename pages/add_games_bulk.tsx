@@ -138,6 +138,7 @@ export const AddGame = () => {
           const newGame: EnteredGame = {
             ...game
           };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           newGame[key] = value as any;
           return newGame;
         }

@@ -4,7 +4,6 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 import prisma from '@/lib/prismadb';
 import { Generator } from 'snowflake-generator';
-import { PrismaPromise } from '@prisma/client';
 
 type Data = {
     success: boolean;
@@ -230,7 +229,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const eloData: Map<string, EloData> = new Map<string, EloData>();
 
-    let mutations: PrismaPromise<any>[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mutations: any[] = [];
 
     for (const game of reqData.games) {
         const addGameMutations = await addGame(game, reqData.gameType, eloData);
