@@ -8,28 +8,38 @@ import { Generator } from 'snowflake-generator';
 type Data = {
     success: boolean;
     error: string | null;
-    id: string | null;
+};
+
+type Game = {
+    player1: string;
+    score1: number;
+    player2: string;
+    score2: number;
 };
 
 type ReqData = {
-    player1: string;
-    email1: string;
-    score1: number;
-    player2: string;
-    email2: string;
-    score2: number;
-    game: number;
+    games: Game[];
+    gameType: number;
 };
 
 function isReqData(data: unknown): data is ReqData {
+    console.log('data');
     if (typeof data !== 'object' || data === null) return false;
-    if ('player1' in data && typeof data.player1 !== 'string') return false;
-    if ('email1' in data && typeof data.email1 !== 'string') return false;
-    if ('score1' in data && typeof data.score1 !== 'number') return false;
-    if ('player2' in data && typeof data.player2 !== 'string') return false;
-    if ('email2' in data && typeof data.email2 !== 'string') return false;
-    if ('score2' in data && typeof data.score2 !== 'number') return false;
-    if ('game' in data && typeof data.game !== 'number') return false;
+    console.log('games');
+    if (!('games' in data) || typeof data.games !== 'object') return false;
+    console.log('gametype');
+    if (!('gameType' in data) || typeof data.gameType !== 'number') return false;
+    const games = data.games as Array<Game>;
+    for (const game of games) {
+        console.log('player1');
+        if (!('player1' in game) || typeof game.player1 !== 'string') return false;
+        console.log('score1');
+        if (!('score1' in game) || typeof game.score1 !== 'number') return false;
+        console.log('player2');
+        if (!('player2' in game) || typeof game.player2 !== 'string') return false;
+        console.log('score2');
+        if (!('score2' in game) || typeof game.score2 !== 'number') return false;
+    }
 
     return true;
 }
@@ -80,26 +90,23 @@ const getEloData = async (email: string) => {
     return { elo, game_count };
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-    const session = await unstable_getServerSession(req, res, authOptions);
-
-    if (!session?.user.admin && process.env.NODE_ENV !== 'development') {
-        res.status(403).json({ success: false, error: 'Unauthorized', id: null });
-        return;
-    }
-
-    const reqData = req.body;
-
-    if (!isReqData(reqData)) {
-        res.status(400).json({ success: false, error: 'Invalid request', id: null });
-        return;
-    }
-
+const addGame = async (
+    newGame: Game,
+    gameType: number,
+    eloData: Map<string, EloData>,
+) => {
     const sfGenerator = new Generator();
     const gameId = sfGenerator.generate() as bigint;
 
-    const { elo: elo1, game_count: game_count1 } = await getEloData(reqData.email1);
-    const { elo: elo2, game_count: game_count2 } = await getEloData(reqData.email2);
+    const player1EloData = eloData.get(newGame.player1);
+    const { elo: elo1, game_count: game_count1 } = player1EloData
+        ? player1EloData
+        : await getEloData(newGame.player1);
+
+    const player2EloData = eloData.get(newGame.player2);
+    const { elo: elo2, game_count: game_count2 } = player2EloData
+        ? player2EloData
+        : await getEloData(newGame.player2);
 
     console.log(elo1, game_count1, elo2, game_count2);
 
@@ -109,10 +116,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const prob1 = 1 / (1 + 10 ** ((elo2 - elo1) / 400));
     const prob2 = 1 / (1 + 10 ** ((elo1 - elo2) / 400));
 
-    const totalScore = reqData.score1 + reqData.score2;
+    const totalScore = newGame.score1 + newGame.score2;
 
-    const newElo1 = Math.round(elo1 + k1 * (reqData.score1 / totalScore - prob1));
-    const newElo2 = Math.round(elo2 + k2 * (reqData.score2 / totalScore - prob2));
+    const newElo1 = Math.round(elo1 + k1 * (newGame.score1 / totalScore - prob1));
+    const newElo2 = Math.round(elo2 + k2 * (newGame.score2 / totalScore - prob2));
+
+    eloData.set(newGame.player1, {
+        elo: newElo1,
+        game_count: game_count1 + 1,
+    });
+    eloData.set(newGame.player2, {
+        elo: newElo2,
+        game_count: game_count2 + 1,
+    });
 
     const gameQuery = prisma.game.create({
         data: {
@@ -120,19 +136,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             teams: {
                 create: [
                     {
-                        score: reqData.score1,
+                        score: newGame.score1,
                         players: {
                             create: [
                                 {
                                     player: {
-                                        connectOrCreate: {
-                                            where: {
-                                                email: reqData.email1,
-                                            },
-                                            create: {
-                                                email: reqData.email1,
-                                                name: reqData.player1,
-                                            },
+                                        connect: {
+                                            email: newGame.player1,
                                         },
                                     },
                                 },
@@ -140,19 +150,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                         },
                     },
                     {
-                        score: reqData.score2,
+                        score: newGame.score2,
                         players: {
                             create: [
                                 {
                                     player: {
-                                        connectOrCreate: {
-                                            where: {
-                                                email: reqData.email2,
-                                            },
-                                            create: {
-                                                email: reqData.email2,
-                                                name: reqData.player2,
-                                            },
+                                        connect: {
+                                            email: newGame.player2,
                                         },
                                     },
                                 },
@@ -163,7 +167,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             },
             gameType: {
                 connect: {
-                    id: reqData.game,
+                    id: gameType,
                 },
             },
         },
@@ -175,7 +179,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             newElo: newElo1,
             player: {
                 connect: {
-                    email: reqData.email1,
+                    email: newGame.player1,
                 },
             },
             game: {
@@ -192,7 +196,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             newElo: newElo2,
             player: {
                 connect: {
-                    email: reqData.email2,
+                    email: newGame.player2,
                 },
             },
             game: {
@@ -203,11 +207,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         },
     });
 
-    const [game] = await prisma.$transaction([
-        gameQuery,
-        eloUpdate1Query,
-        eloUpdate2Query,
-    ]);
+    return [gameQuery, eloUpdate1Query, eloUpdate2Query];
+};
 
-    res.status(200).json({ success: true, error: null, id: game.id.toString() });
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const session = await unstable_getServerSession(req, res, authOptions);
+
+    if (!session?.user.admin && process.env.NODE_ENV !== 'development') {
+        res.status(403).json({ success: false, error: 'Unauthorized' });
+        return;
+    }
+
+    const reqData = req.body;
+
+    console.log(reqData);
+
+    if (!isReqData(reqData)) {
+        res.status(400).json({ success: false, error: 'Invalid request' });
+        return;
+    }
+
+    const eloData: Map<string, EloData> = new Map<string, EloData>();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mutations: any[] = [];
+
+    for (const game of reqData.games) {
+        const addGameMutations = await addGame(game, reqData.gameType, eloData);
+        mutations = [...mutations, ...addGameMutations];
+    }
+
+    await prisma.$transaction(mutations);
+
+    res.status(200).json({ success: true, error: null });
 }

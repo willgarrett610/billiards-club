@@ -31,7 +31,7 @@ export const AdminOnly = ({ children, noExtras }: AdminOnlyProps) => {
                     <CircularProgress />
                 </Box>
             </Box>
-        ) : session?.user.admin ? (
+        ) : session?.user.admin || process.env.NODE_ENV === "development" ? (
             <>{children}</>
         ) : (
             noExtras ? <></> :

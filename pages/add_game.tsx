@@ -1,5 +1,5 @@
 import { Header } from '@/components/header/header';
-import { getPlayers } from '@/util/playerUtil';
+import { useGetPlayers } from '@/services/playerService';
 import {
     Autocomplete,
     AutocompleteRenderInputParams,
@@ -15,11 +15,12 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import styles from '@/styles/AddGame.module.css';
 import { AdminOnly } from '@/components/admin-only';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { useAddGame, useGetGameTypes } from '@/services/gameService';
 
 const isValidEmail = (email: string) => email.match('(.*@.*\\.nmt\\.edu)+') != null;
 
 const playerSection = (
-    players: Player[],
+    players: Player[] | undefined,
     player: Player | string,
     setPlayer: Dispatch<SetStateAction<string | Player>>,
     email: string,
@@ -28,6 +29,8 @@ const playerSection = (
     setScore: Dispatch<SetStateAction<number>>,
     showError: boolean,
 ) => {
+    if (!players) return <></>;
+
     const playerExists = typeof player !== 'string';
 
     const playerErr = player === '' && showError;
@@ -48,7 +51,7 @@ const playerSection = (
                 autoComplete="off"
                 inputProps={{
                     ...params.inputProps,
-                    autoComplete: Math.random().toString(36).substring(7),
+                    autoComplete: "off",
                 }}
             />
         ),
@@ -112,9 +115,6 @@ const playerSection = (
 };
 
 export const AddGame = () => {
-    const [players, setPlayers] = useState<Player[]>([]);
-    const [loading, setLoading] = useState(false);
-
     const [player1, setPlayer1] = useState<Player | string>('');
     const [email1, setEmail1] = useState('');
     const [score1, setScore1] = useState(0);
@@ -126,14 +126,15 @@ export const AddGame = () => {
 
     const [showError, setShowError] = useState(false);
 
-    const [submitting, setSubmitting] = useState(false);
 
-    if (!loading && players.length === 0) {
-        setLoading(true);
-        getPlayers().then((players) => {
-            setPlayers(players);
-        });
-    }
+    const {
+        data: players
+    } = useGetPlayers();
+    const {
+        data: gameTypes
+    } = useGetGameTypes();
+
+    const mutation = useAddGame();
 
     const submit = () => {
         if (![player1, player2, email1, email2].every(Boolean)) {
@@ -141,34 +142,19 @@ export const AddGame = () => {
             return;
         }
 
-        setSubmitting(true);
-
         const playerName1 = typeof player1 === 'string' ? player1 : player1.name;
         const playerName2 = typeof player2 === 'string' ? player2 : player2.name;
 
-        console.log({
-            playerName1,
+        mutation.mutate({
+            player1: playerName1,
             email1,
             score1,
-            playerName2,
+            player2: playerName2,
             email2,
             score2,
             game,
-        });
-
-        fetch('/api/add_game', {
-            body: JSON.stringify({
-                player1: playerName1,
-                email1,
-                score1,
-                player2: playerName2,
-                email2,
-                score2,
-                game,
-            }),
-            method: 'POST',
-        }).then((res) => {
-            if (res.status === 200) {
+        }, {
+            onSuccess: () => {
                 setPlayer1('');
                 setEmail1('');
                 setScore1(0);
@@ -176,9 +162,8 @@ export const AddGame = () => {
                 setEmail2('');
                 setScore2(0);
                 setGame(1);
-                setSubmitting(false);
             }
-        });
+        })
     };
 
     return (
@@ -230,14 +215,16 @@ export const AddGame = () => {
                                     )
                                 }
                             >
-                                <MenuItem value={1}>8-ball</MenuItem>
-                                <MenuItem value={2}>9-ball</MenuItem>
-                                <MenuItem value={3}>Snooker</MenuItem>
+                                {
+                                gameTypes?.map(gameType => (
+                                    <MenuItem key={Number(gameType.id)} value={Number(gameType.id)}>{gameType.name}</MenuItem>
+                                ))
+                                }
                             </Select>
                         </FormControl>
                         <Button
                             onClick={submit}
-                            disabled={submitting}
+                            disabled={mutation.isLoading}
                             variant="contained"
                             sx={{ width: '150px', marginTop: '20px' }}
                         >

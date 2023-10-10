@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     console.log(session);
     console.log(user);
 
-    if (user == null || !user.admin) {
+    if ((user == null || !user.admin) && process.env.NODE_ENV !== 'development') {
         res.status(403).json({ players: null });
     } else {
         const players = await prisma.player.findMany();

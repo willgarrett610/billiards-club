@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { Analytics } from '@vercel/analytics/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -18,6 +19,8 @@ const darkTheme = createTheme({
     },
 });
 
+const queryClient = new QueryClient();
+
 export default function App({
     Component,
     pageProps: { session, ...pageProps },
@@ -25,16 +28,20 @@ export default function App({
     return (
         <>
             <SessionProvider session={session}>
-                <ThemeProvider theme={darkTheme}>
-                    <CssBaseline />
-                    <Head>
-                        <title>Billiards Club</title>
-                        <meta name="description" content="Billiards Club Website" />
-                        <meta name="viewport" content="width=device-width, initial-scale=1" />
-                        <link rel="icon" href="/favicon.ico" />
-                    </Head>
-                    <Component {...pageProps} />
-                </ThemeProvider>
+                <CssBaseline>
+                    <ThemeProvider theme={darkTheme}>
+                        <QueryClientProvider client={queryClient}>
+                            <CssBaseline />
+                            <Head>
+                                <title>Billiards Club</title>
+                                <meta name="description" content="Billiards Club Website" />
+                                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                                <link rel="icon" href="/favicon.ico" />
+                            </Head>
+                            <Component {...pageProps} />
+                        </QueryClientProvider>
+                    </ThemeProvider>
+                </CssBaseline>
             </SessionProvider>
             <Analytics/>
         </>
