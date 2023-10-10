@@ -48,6 +48,7 @@ export const DesktopHeader = () => {
                 <Link className={styles.button} href="/rankings">Rankings</Link>
                 <AdminOnly noExtras>
                     <Link className={styles.button} href="/add_game">Add Game</Link>
+                    <Link className={styles.button} href="/add_games_bulk">Bulk Add Games</Link>
                 </AdminOnly>
                 {account}
             </div>

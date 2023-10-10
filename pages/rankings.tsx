@@ -1,19 +1,12 @@
 import { Header } from '@/components/header/header'
-import { getRankings, Ranking } from '@/util/playerUtil';
+import { Ranking, useGetRankings } from '@/services/playerService';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { useState } from 'react';
 
 
 const Rankings = () => {
-  const [rankings, setRankings] = useState<Ranking[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data: rankings } = useGetRankings();
 
-  if (!loading && rankings.length === 0) {
-    setLoading(true);
-    getRankings().then((rankings) => {
-        setRankings(rankings);
-    });
-  }
+  console.log(rankings);
 
   return (
     <>
@@ -30,7 +23,7 @@ const Rankings = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rankings.map((ranking, index) => (
+              {rankings?.map((ranking: Ranking, index) => (
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{ranking.name}</TableCell>
