@@ -164,28 +164,33 @@ export const AddGame = () => {
       });
     };
 
-    const submit = () => {
-        const gameErrors: number[] = [];
-        enteredGames.forEach((game, i) => {
-          if (game.player1 == null || game.player2 == null || (game.score1 === 0 && game.score2 === 0)) {
-            gameErrors.push(i);
-          }
-        });
-        if (gameErrors.length > 0) {
-          setErrors(gameErrors);
-          return;
-        }
+    const submitNextChunk = async (submittingGames: EnteredGame[]) => {
+      const chunk = submittingGames.filter((_,i) => i < 10);
 
-        mutation.mutate({
-            games: enteredGames.map(game => ({
-              player1: game.player1?.email as string,
-              score1: game.score1,
-              player2: game.player2?.email as string,
-              score2: game.score2,
-            })),
-            gameType,
-        }, {
-            onSuccess: () => {
+      const gameErrors: number[] = [];
+      chunk.forEach((game, i) => {
+        if (game.player1 == null || game.player2 == null || (game.score1 === 0 && game.score2 === 0)) {
+          gameErrors.push(i);
+        }
+      });
+      if (gameErrors.length > 0) {
+        setErrors(gameErrors);
+        return;
+      }
+
+      mutation.mutate({
+          games: chunk.map(game => ({
+            player1: game.player1?.email as string,
+            score1: game.score1,
+            player2: game.player2?.email as string,
+            score2: game.score2,
+          })),
+          gameType,
+      }, {
+          onSuccess: () => {
+            const filteredGames = submittingGames.filter((_,i) => i >= 10);
+
+            if (filteredGames.length === 0) {
               setEnteredGames([{
                 player1: null,
                 score1: 0,
@@ -194,8 +199,16 @@ export const AddGame = () => {
               }]);
               setGameType(1);
               setErrors([]);
+            } else {
+              setEnteredGames(filteredGames);
+              submitNextChunk(filteredGames);
             }
-        })
+          }
+      });
+    };
+
+    const submit = () => {
+      submitNextChunk(enteredGames);
     };
 
     return (
