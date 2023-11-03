@@ -4,6 +4,7 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 import prisma from '@/lib/prismadb';
 import { Generator } from 'snowflake-generator';
+import { getNewEloScores } from '@/util/eloUtil';
 
 type Data = {
     success: boolean;
@@ -108,18 +109,23 @@ const addGame = async (
         ? player2EloData
         : await getEloData(newGame.player2);
 
-    console.log(elo1, game_count1, elo2, game_count2);
+    // const k1 = 800 / (game_count1 + 1);
+    // const k2 = 800 / (game_count2 + 1);
 
-    const k1 = 800 / (game_count1 + 1);
-    const k2 = 800 / (game_count2 + 1);
+    // const prob1 = 1 / (1 + 10 ** ((elo2 - elo1) / 400));
+    // const prob2 = 1 / (1 + 10 ** ((elo1 - elo2) / 400));
 
-    const prob1 = 1 / (1 + 10 ** ((elo2 - elo1) / 400));
-    const prob2 = 1 / (1 + 10 ** ((elo1 - elo2) / 400));
+    // const totalScore = newGame.score1 + newGame.score2;
 
-    const totalScore = newGame.score1 + newGame.score2;
+    // const newElo1 = Math.round(elo1 + k1 * (newGame.score1 / totalScore - prob1));
+    // const newElo2 = Math.round(elo2 + k2 * (newGame.score2 / totalScore - prob2));
 
-    const newElo1 = Math.round(elo1 + k1 * (newGame.score1 / totalScore - prob1));
-    const newElo2 = Math.round(elo2 + k2 * (newGame.score2 / totalScore - prob2));
+    const [newElo1, newElo2] = getNewEloScores(
+        elo1,
+        elo2,
+        newGame.score1,
+        newGame.score2,
+    );
 
     eloData.set(newGame.player1, {
         elo: newElo1,
