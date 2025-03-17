@@ -15,6 +15,7 @@ const getPlayers = async (): Promise<Player[]> => {
 export const useGetPlayers = () => useQuery(['getPlayers'], getPlayers);
 
 export type Ranking = {
+    rank: number;
     name: string;
     elo: number;
 };

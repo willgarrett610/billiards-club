@@ -1,5 +1,5 @@
 import { Header } from '@/components/header/header';
-import { Ranking, useGetRankings } from '@/services/playerService';
+import { useGetRankings } from '@/services/playerService';
 import { useMemo } from 'react';
 import {
     MaterialReactTable,
@@ -12,6 +12,10 @@ const Rankings = () => {
 
     const columns = useMemo(
         () => [
+            {
+                header: 'Rank',
+                accessorKey: 'rank',
+            },
             {
                 header: 'Name',
                 accessorKey: 'name',
@@ -27,7 +31,7 @@ const Rankings = () => {
     const table = useMaterialReactTable({
         columns,
         data: rankings ? rankings : [],
-        enableRowSelection: true,
+        enableRowSelection: false,
         enableColumnOrdering: true,
         enableGlobalFilter: false,
     });
@@ -42,5 +46,4 @@ const Rankings = () => {
         </>
     );
 };
-
 export default Rankings;
